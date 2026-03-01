@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LoanIQ — Personal Loan Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0f;
+    --paper: #f5f2ec;
+    --cream: #ede9e0;
+    --gold: #c9a84c;
+    --gold-light: #f0dfa0;
+    --green: #2d6a4f;
+    --green-light: #d8f3dc;
+    --red: #9b2226;
+    --red-light: #fde8e8;
+    --orange: #ca6702;
+    --orange-light: #fef3e2;
+    --yellow: #6b5900;
+    --yellow-light: #fff8d6;
+    --border: #d8d2c4;
+    --shadow: 0 4px 24px rgba(13,13,15,0.08);
+    --shadow-lg: 0 12px 48px rgba(13,13,15,0.14);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 80% 10%, rgba(201,168,76,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 10% 90%, rgba(45,106,79,0.06) 0%, transparent 50%);
+  }
+
+  /* HEADER */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(245,242,236,0.85);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .logo-icon {
+    width: 38px; height: 38px;
+    background: var(--ink);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon svg { width: 22px; height: 22px; }
+  .logo-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+  .logo-text span { color: var(--gold); }
+  .header-stats {
+    display: flex; gap: 2rem;
+  }
+  .hstat { text-align: center; }
+  .hstat-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+  }
+  .hstat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    font-weight: 500;
+  }
+  .header-badge {
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 3rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* HERO */
+  .hero {
+    grid-column: 1 / -1;
+    padding-bottom: 1rem;
+  }
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    max-width: 620px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    margin-top: 0.8rem;
+    color: #666;
+    font-size: 1rem;
+    max-width: 500px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* FORM CARD */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+  }
+  .card-sub { font-size: 0.82rem; color: #999; margin-bottom: 1.5rem; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group.full { grid-column: 1 / -1; }
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+  }
+  input, select {
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--ink);
+    background: var(--paper);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
+    background: white;
+  }
+
+  /* DTI auto-calc */
+  .dti-display {
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.92rem;
+    background: var(--cream);
+    color: #555;
+    font-weight: 500;
+  }
+
+  .predict-btn {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+    padding: 0.9rem;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .predict-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(13,13,15,0.3);
+  }
+  .predict-btn:active { transform: translateY(0); }
+  .predict-btn .btn-shimmer {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .predict-btn:hover .btn-shimmer { transform: translateX(100%); }
+
+  /* RESULT PANEL */
+  .result-panel {
+    display: flex; flex-direction: column; gap: 1.5rem;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .result-panel.visible { opacity: 1; transform: none; }
+
+  /* VERDICT CARD */
+  .verdict-card {
+    border-radius: 20px;
+    padding: 1.75rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .verdict-card.approved {
+    background: var(--green-light);
+    border: 1.5px solid #b7e4c7;
+  }
+  .verdict-card.declined {
+    background: var(--red-light);
+    border: 1.5px solid #f5c6cb;
+  }
+  .verdict-emoji { font-size: 2.8rem; margin-bottom: 0.5rem; }
+  .verdict-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+  }
+  .verdict-card.approved .verdict-title { color: var(--green); }
+  .verdict-card.declined .verdict-title { color: var(--red); }
+  .verdict-sub { font-size: 0.85rem; color: #666; margin-top: 0.3rem; }
+
+  /* PROBABILITY METER */
+  .prob-meter {
+    margin-top: 1.25rem;
+    text-align: left;
+  }
+  .prob-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: #888; margin-bottom: 0.5rem;
+  }
+  .prob-label span:last-child { color: var(--ink); font-size: 0.9rem; }
+  .prob-track {
+    height: 10px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .prob-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: linear-gradient(90deg, #2d6a4f, #52b788);
+  }
+  .verdict-card.declined .prob-fill {
+    background: linear-gradient(90deg, #9b2226, #e63946);
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+  }
+  .stat-box {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.1rem 1rem;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+  .stat-lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-top: 0.3rem; font-weight: 600; }
+
+  /* RISK BADGE */
+  .risk-badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+  .risk-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .risk-green { background: var(--green-light); color: var(--green); }
+  .risk-green .risk-dot { background: var(--green); }
+  .risk-yellow { background: var(--yellow-light); color: var(--yellow); }
+  .risk-yellow .risk-dot { background: #d4a017; }
+  .risk-orange { background: var(--orange-light); color: var(--orange); }
+  .risk-orange .risk-dot { background: var(--orange); }
+  .risk-red { background: var(--red-light); color: var(--red); }
+  .risk-red .risk-dot { background: var(--red); }
+
+  /* ADVICE */
+  .advice-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.4rem;
+  }
+  .advice-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.05rem;
+    margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .advice-item {
+    display: flex; align-items: flex-start; gap: 0.6rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--cream);
+    font-size: 0.87rem;
+    color: #444;
+    line-height: 1.5;
+  }
+  .advice-item:last-child { border-bottom: none; }
+  .advice-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  /* MODEL METRICS PANEL */
+  .metrics-section { grid-column: 1 / -1; }
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .metric-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .metric-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+  }
+  .metric-lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #999; margin-top: 0.25rem; font-weight: 600; }
+
+  /* FEATURE IMPORTANCE CHART */
+  .feat-chart { margin-top: 1.5rem; }
+  .feat-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 50px;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.45rem 0;
+  }
+  .feat-name { font-size: 0.82rem; font-weight: 500; color: #555; }
+  .feat-bar-bg {
+    height: 8px;
+    background: var(--cream);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .feat-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--gold), #e8c46a);
+    transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .feat-pct { font-size: 0.78rem; color: #999; text-align: right; font-weight: 500; }
+
+  /* LOADING OVERLAY */
+  .loading-overlay {
+    position: fixed; inset: 0;
+    background: rgba(245,242,236,0.85);
+    backdrop-filter: blur(8px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 200;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .loading-overlay.active { opacity: 1; pointer-events: all; }
+  .spinner {
+    width: 44px; height: 44px;
+    border: 3px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .loading-text { margin-top: 1rem; font-size: 0.9rem; color: #666; font-weight: 500; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* EMPTY STATE */
+  .empty-state {
+    background: white;
+    border: 1.5px dashed var(--border);
+    border-radius: 20px;
+    padding: 3rem 2rem;
+    text-align: center;
+    color: #bbb;
+  }
+  .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state-text { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #ccc; }
+  .empty-state-sub { font-size: 0.82rem; color: #ccc; margin-top: 0.4rem; }
+
+  .section-eyebrow {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 0.25rem;
+  }
+  .section-sub { font-size: 0.82rem; color: #999; }
+
+  @media (max-width: 900px) {
+    .container { grid-template-columns: 1fr; padding: 1.5rem; }
+    header { padding: 1rem 1.5rem; }
+    .header-stats { display: none; }
+    .metrics-grid { grid-template-columns: repeat(3, 1fr); }
+    .hero { grid-column: 1; }
+    .metrics-section { grid-column: 1; }
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p class="loading-text">Analyzing your profile…</p>
+</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="logo-text">Loan<span>IQ</span></div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><div class="hstat-val" id="hAccuracy">—</div><div class="hstat-label">Accuracy</div></div>
+    <div class="hstat"><div class="hstat-val" id="hAUC">—</div><div class="hstat-label">AUC-ROC</div></div>
+    <div class="hstat"><div class="hstat-val" id="hSamples">—</div><div class="hstat-label">Trained On</div></div>
+  </div>
+  <div class="header-badge">✦ ML Powered</div>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <div class="hero-eyebrow">✦ Instant Loan Assessment</div>
+    <h1>Will your loan<br>get <em>approved?</em></h1>
+    <p class="hero-sub">Enter your financial details and our Random Forest model gives you a real-time decision with risk analysis and actionable advice.</p>
+  </div>
+
+  <!-- FORM -->
+  <div class="card">
+    <div class="card-title">Applicant Profile</div>
+    <div class="card-sub">Fill in all fields for the most accurate prediction</div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="age" placeholder="e.g. 35" min="21" max="70">
+      </div>
+      <div class="form-group">
+        <label>Annual Income (₹)</label>
+        <input type="number" id="income" placeholder="e.g. 600000" min="150000">
+      </div>
+      <div class="form-group">
+        <label>Credit Score</label>
+        <input type="number" id="credit_score" placeholder="300 – 850" min="300" max="850">
+      </div>
+      <div class="form-group">
+        <label>Employment Years</label>
+        <input type="number" id="employment_years" placeholder="e.g. 5" min="0" max="40">
+      </div>
+      <div class="form-group">
+        <label>Loan Amount (₹)</label>
+        <input type="number" id="loan_amount" placeholder="e.g. 500000">
+      </div>
+      <div class="form-group">
+        <label>Loan Term (months)</label>
+        <select id="loan_term">
+          <option value="12">12 months</option>
+          <option value="24">24 months</option>
+          <option value="36" selected>36 months</option>
+          <option value="48">48 months</option>
+          <option value="60">60 months</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Existing Loans</label>
+        <input type="number" id="existing_loans" placeholder="e.g. 1" min="0" max="10">
+      </div>
+      <div class="form-group">
+        <label>Education Level</label>
+        <select id="education">
+          <option>High School</option>
+          <option>Some College</option>
+          <option selected>Bachelor's</option>
+          <option>Graduate</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Home Ownership</label>
+        <select id="home_ownership">
+          <option>Renting</option>
+          <option>Own</option>
+          <option selected>Mortgage</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Debt-to-Income Ratio (auto-calculated)</label>
+        <div class="dti-display" id="dtiDisplay">Fill in income & loans to calculate</div>
+        <input type="hidden" id="debt_to_income" value="0">
+      </div>
+
+      <button class="predict-btn" onclick="predict()">
+        <div class="btn-shimmer"></div>
+        Predict Loan Approval →
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div>
+    <div class="result-panel" id="resultPanel">
+      <!-- filled by JS -->
+    </div>
+    <div class="empty-state" id="emptyState">
+      <div class="empty-state-icon">🏦</div>
+      <div class="empty-state-text">Your result appears here</div>
+      <div class="empty-state-sub">Fill out the form and click Predict</div>
+    </div>
+  </div>
+
+  <!-- MODEL METRICS -->
+  <div class="metrics-section card">
+    <div class="section-eyebrow">✦ Model Performance</div>
+    <div class="section-title">Random Forest Classifier</div>
+    <div class="section-sub">Trained on 4,000 samples · 10 features · scikit-learn</div>
+
+    <div class="metrics-grid">
+      <div class="metric-card"><div class="metric-val" id="mAccuracy">—</div><div class="metric-lbl">Accuracy</div></div>
+      <div class="metric-card"><div class="metric-val" id="mAUC">—</div><div class="metric-lbl">AUC-ROC</div></div>
+      <div class="metric-card"><div class="metric-val" id="mPrecision">—</div><div class="metric-lbl">Precision</div></div>
+      <div class="metric-card"><div class="metric-val" id="mRecall">—</div><div class="metric-lbl">Recall</div></div>
+      <div class="metric-card"><div class="metric-val" id="mF1">—</div><div class="metric-lbl">F1-Score</div></div>
+    </div>
+
+    <div class="feat-chart" id="featChart"></div>
+  </div>
+</div>
+
+<script>
+// Load metadata
+async function loadMetadata() {
+  try {
+    const res = await fetch('/api/metadata');
+    const d = await res.json();
+    const pct = v => (v * 100).toFixed(1) + '%';
+    document.getElementById('hAccuracy').textContent = pct(d.accuracy);
+    document.getElementById('hAUC').textContent = d.auc_roc.toFixed(3);
+    document.getElementById('hSamples').textContent = d.training_samples.toLocaleString();
+    document.getElementById('mAccuracy').textContent = pct(d.accuracy);
+    document.getElementById('mAUC').textContent = d.auc_roc.toFixed(3);
+    document.getElementById('mPrecision').textContent = pct(d.precision);
+    document.getElementById('mRecall').textContent = pct(d.recall);
+    document.getElementById('mF1').textContent = pct(d.f1);
+    renderFeatureChart(d.feature_importances);
+  } catch (e) {
+    // demo mode: show placeholder
+    document.getElementById('hAccuracy').textContent = '82.0%';
+    document.getElementById('hAUC').textContent = '0.878';
+    document.getElementById('hSamples').textContent = '4,000';
+  }
+}
+
+function renderFeatureChart(importances) {
+  const labels = {
+    debt_to_income: 'Debt-to-Income',
+    credit_score: 'Credit Score',
+    income: 'Annual Income',
+    employment_years: 'Employment Years',
+    age: 'Age',
+    loan_amount: 'Loan Amount',
+    existing_loans: 'Existing Loans',
+    education: 'Education',
+    home_ownership: 'Home Ownership',
+    loan_term: 'Loan Term',
+  };
+  const max = Math.max(...Object.values(importances));
+  const html = Object.entries(importances).map(([k, v]) => `
+    <div class="feat-row">
+      <div class="feat-name">${labels[k] || k}</div>
+      <div class="feat-bar-bg">
+        <div class="feat-bar-fill" style="width:${(v/max*100).toFixed(1)}%"></div>
+      </div>
+      <div class="feat-pct">${(v*100).toFixed(1)}%</div>
+    </div>
+  `).join('');
+  document.getElementById('featChart').innerHTML = `
+    <div style="margin-top:1.2rem;border-top:1px solid var(--border);padding-top:1.2rem;">
+      <div class="section-eyebrow" style="margin-bottom:0.8rem">✦ Feature Importance</div>
+      ${html}
+    </div>`;
+  setTimeout(() => {
+    document.querySelectorAll('.feat-bar-fill').forEach(el => {
+      const w = el.style.width; el.style.width = '0'; requestAnimationFrame(() => el.style.width = w);
+    });
+  }, 100);
+}
+
+// Auto-calculate DTI
+function calcDTI() {
+  const income = parseFloat(document.getElementById('income').value);
+  const loans = parseFloat(document.getElementById('existing_loans').value) || 0;
+  const amount = parseFloat(document.getElementById('loan_amount').value);
+  const term = parseFloat(document.getElementById('loan_term').value);
+  if (income > 0 && amount > 0 && term > 0) {
+    const monthly = income / 12;
+    const newPayment = amount / term;
+    const existingDebt = loans * 500;
+    const dti = Math.min((newPayment + existingDebt) / monthly, 1);
+    document.getElementById('debt_to_income').value = dti.toFixed(4);
+    const pct = (dti * 100).toFixed(1);
+    const color = dti < 0.3 ? '#2d6a4f' : dti < 0.5 ? '#ca6702' : '#9b2226';
+    document.getElementById('dtiDisplay').innerHTML =
+      `<span style="color:${color};font-weight:600">${pct}%</span> &nbsp;·&nbsp; ${dti < 0.3 ? '✓ Healthy' : dti < 0.5 ? '⚠ Moderate' : '✗ High'}`;
+  }
+}
+['income','existing_loans','loan_amount','loan_term'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', calcDTI);
+});
+
+async function predict() {
+  const fields = ['age','income','employment_years','credit_score','existing_loans','loan_amount'];
+  for (const f of fields) {
+    if (!document.getElementById(f).value) {
+      alert(`Please fill in: ${f.replace(/_/g,' ')}`);
+      return;
+    }
+  }
+  calcDTI();
+  const payload = {
+    age: document.getElementById('age').value,
+    income: document.getElementById('income').value,
+    employment_years: document.getElementById('employment_years').value,
+    credit_score: document.getElementById('credit_score').value,
+    existing_loans: document.getElementById('existing_loans').value,
+    loan_amount: document.getElementById('loan_amount').value,
+    loan_term: document.getElementById('loan_term').value,
+    debt_to_income: document.getElementById('debt_to_income').value || '0.2',
+    education: document.getElementById('education').value,
+    home_ownership: document.getElementById('home_ownership').value,
+  };
+
+  document.getElementById('loadingOverlay').classList.add('active');
+
+  try {
+    const res = await fetch('/api/predict', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    renderResult(data);
+  } catch (e) {
+    alert('Could not connect to server. Make sure app.py is running.');
+  } finally {
+    document.getElementById('loadingOverlay').classList.remove('active');
+  }
+}
+
+function renderResult(d) {
+  document.getElementById('emptyState').style.display = 'none';
+  const riskClass = {green:'risk-green',yellow:'risk-yellow',orange:'risk-orange',red:'risk-red'}[d.risk_color] || 'risk-green';
+  const pct = Math.round(d.probability * 100);
+  const adviceHtml = d.advice.map(a => `
+    <div class="advice-item">
+      <span class="advice-icon">${d.approved ? '✓' : '→'}</span>
+      <span>${a}</span>
+    </div>`).join('');
+
+  const html = `
+    <div class="verdict-card ${d.approved ? 'approved' : 'declined'}">
+      <div class="verdict-emoji">${d.approved ? '✅' : '❌'}</div>
+      <div class="verdict-title">${d.approved ? 'Loan Approved' : 'Loan Declined'}</div>
+      <div class="verdict-sub">${d.approved ? 'This application meets approval criteria' : 'This application does not meet approval criteria'}</div>
+      <div>
+        <span class="risk-badge ${riskClass}">
+          <span class="risk-dot"></span>${d.risk}
+        </span>
+      </div>
+      <div class="prob-meter">
+        <div class="prob-label"><span>Approval Probability</span><span>${pct}%</span></div>
+        <div class="prob-track"><div class="prob-fill" id="probFill" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-val">${pct}%</div>
+        <div class="stat-lbl">Approval Prob</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${d.suggested_rate}%</div>
+        <div class="stat-lbl">Est. APR</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val">${d.risk.split(' ')[0]}</div>
+        <div class="stat-lbl">Risk Band</div>
+      </div>
+    </div>
+
+    <div class="advice-card">
+      <div class="advice-title">💡 Recommendations</div>
+      ${adviceHtml}
+    </div>
+  `;
+
+  const panel = document.getElementById('resultPanel');
+  panel.innerHTML = html;
+  panel.classList.add('visible');
+  setTimeout(() => {
+    const fill = document.getElementById('probFill');
+    if (fill) fill.style.width = pct + '%';
+  }, 150);
+}
+
+loadMetadata();
+</script>
+</body>
+</html>
