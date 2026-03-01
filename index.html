@@ -443,14 +443,73 @@
   }
   .section-sub { font-size: 0.82rem; color: #999; }
 
+  /* TABLET */
   @media (max-width: 900px) {
-    .container { grid-template-columns: 1fr; padding: 1.5rem; }
+    .container { grid-template-columns: 1fr; padding: 1.5rem; gap: 1.5rem; }
     header { padding: 1rem 1.5rem; }
     .header-stats { display: none; }
     .metrics-grid { grid-template-columns: repeat(3, 1fr); }
     .hero { grid-column: 1; }
     .metrics-section { grid-column: 1; }
-    .form-grid { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* MOBILE */
+  @media (max-width: 600px) {
+    header { padding: 0.85rem 1rem; }
+    .logo-text { font-size: 1.2rem; }
+    .logo-icon { width: 32px; height: 32px; border-radius: 8px; }
+    .logo-icon svg { width: 18px; height: 18px; }
+    .header-badge { font-size: 0.65rem; padding: 0.25rem 0.6rem; }
+
+    .container { padding: 1rem; gap: 1.2rem; }
+
+    .hero h1 { font-size: 1.8rem; }
+    .hero-sub { font-size: 0.9rem; }
+
+    .card { padding: 1.25rem; border-radius: 16px; }
+    .card-title { font-size: 1.15rem; }
+
+    .form-grid { grid-template-columns: 1fr; gap: 0.9rem; }
+    .form-group.full { grid-column: 1; }
+
+    input, select {
+      padding: 0.75rem 0.85rem;
+      font-size: 1rem;
+    }
+
+    .predict-btn { padding: 1rem; font-size: 1rem; border-radius: 14px; }
+
+    .verdict-card { padding: 1.4rem 1rem; border-radius: 16px; }
+    .verdict-emoji { font-size: 2.2rem; }
+    .verdict-title { font-size: 1.35rem; }
+
+    .stats-row { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+    .stat-box { padding: 0.85rem 0.5rem; border-radius: 12px; }
+    .stat-val { font-size: 1.1rem; }
+    .stat-lbl { font-size: 0.62rem; }
+
+    .advice-card { padding: 1.1rem; }
+    .advice-item { font-size: 0.85rem; }
+
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .metric-card { padding: 1rem 0.75rem; border-radius: 12px; }
+    .metric-val { font-size: 1.3rem; }
+
+    .feat-row { grid-template-columns: 110px 1fr 45px; gap: 0.5rem; }
+    .feat-name { font-size: 0.76rem; }
+    .feat-pct { font-size: 0.72rem; }
+
+    .empty-state { padding: 2rem 1.25rem; }
+    .empty-state-icon { font-size: 2.2rem; }
+    .result-panel { gap: 1rem; }
+  }
+
+  /* VERY SMALL SCREENS */
+  @media (max-width: 360px) {
+    .hero h1 { font-size: 1.5rem; }
+    .stat-val { font-size: 1rem; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
